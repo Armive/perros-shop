@@ -17,7 +17,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
+  AlertDialogTrigger
 } from '@/components/ui/alert-dialog';
 import {
   ShoppingCart,
@@ -28,7 +28,7 @@ import {
   CreditCard,
   Truck,
   Gift,
-  Check,
+  Check
 } from 'lucide-react';
 
 export default function CartPage() {
@@ -126,8 +126,8 @@ export default function CartPage() {
                   <Link href={`/producto/${item.id}`} className="shrink-0">
                     <div className="bg-secondary relative h-24 w-24 overflow-hidden rounded-lg">
                       <Image
-                        src={item.image}
-                        alt={item.name}
+                        src={item.featuredImage?.url || ''}
+                        alt={item.title}
                         fill
                         className="object-cover transition-transform hover:scale-105"
                       />
@@ -138,9 +138,9 @@ export default function CartPage() {
                   <div className="flex flex-1 flex-col justify-between">
                     <div>
                       <Link href={`/producto/${item.id}`}>
-                        <h3 className="hover:text-muted-foreground font-semibold">{item.name}</h3>
+                        <h3 className="hover:text-muted-foreground font-semibold">{item.title}</h3>
                       </Link>
-                      <p className="text-muted-foreground text-sm">{item.brand}</p>
+                      <p className="text-muted-foreground text-sm">Brand of kittens</p>
                     </div>
 
                     <div className="flex items-center justify-between">
@@ -168,7 +168,11 @@ export default function CartPage() {
                       {/* Price & Remove */}
                       <div className="flex items-center gap-4">
                         <span className="font-semibold">
-                          ${(item.price * item.quantity).toFixed(2)}
+                          $
+                          {(
+                            Number(item.selectedOrFirstAvailableVariant?.price?.amount) *
+                            item.quantity
+                          ).toFixed(2)}
                         </span>
                         <Button
                           variant="ghost"

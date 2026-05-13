@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Cat, Dog, Instagram, Facebook, Twitter, Mail, MapPin, Phone } from 'lucide-react';
+import { Cat, Dog, Mail, MapPin, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
@@ -21,23 +21,8 @@ export function Footer() {
               Tu tienda favorita para consentir a tus mascotas. Productos de calidad para perros y
               gatos.
             </p>
-            <div className="flex gap-2">
-              <Button variant="outline" size="icon" asChild>
-                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
-                  <Instagram className="h-4 w-4" />
-                </a>
-              </Button>
-              <Button variant="outline" size="icon" asChild>
-                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
-                  <Facebook className="h-4 w-4" />
-                </a>
-              </Button>
-              <Button variant="outline" size="icon" asChild>
-                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
-                  <Twitter className="h-4 w-4" />
-                </a>
-              </Button>
-            </div>
+      
+            
           </div>
 
           {/* Quick Links */}

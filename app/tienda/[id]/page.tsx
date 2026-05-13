@@ -1,12 +1,11 @@
 'use client';
 
-import { use, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { products } from '@/data/products';
 import { useCart } from '@/context/cart-context';
-import { ProductCard } from '@/components/product-card';
+import ProductCard from '@/components/product-card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
@@ -20,7 +19,7 @@ import {
   Shield,
   RotateCcw,
   Cat,
-  Dog,
+  Dog
 } from 'lucide-react';
 
 interface ProductPageProps {
@@ -28,21 +27,38 @@ interface ProductPageProps {
 }
 
 export default function ProductPage({ params }: ProductPageProps) {
+  const [products, setProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const response = await fetch('/api/getProducts');
+      const data = await response.json();
+      setProducts(data.products);
+    };
+    fetchProducts();
+  }, []);
+  console.log(products);
+
   const { id } = use(params);
-  const product = products.find((p) => p.id === id);
+  console.log('ID del producto:', id);
+  const product: Product | undefined = products.find((p) => p.id.split('/').pop() === id);
   const { addToCart, items } = useCart();
   const [quantity, setQuantity] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
 
+  if (products.length === 0) {
+    return <div className="container mx-auto px-4 py-8">Cargando...</div>;
+  }
   if (!product) {
     notFound();
   }
 
-  const cartItem = items.find((item) => item.id === product.id);
+  const cartItem = items.find((item) => item.id === product.id.split('/').pop());
   const relatedProducts = products
     .filter(
       (p) =>
-        p.id !== product.id && (p.category === product.category || p.petType === product.petType)
+        p.id !== product.id &&
+        p.collections.edges[0]?.node.title === product.collections.edges[0]?.node.title
     )
     .slice(0, 4);
 
@@ -54,18 +70,16 @@ export default function ProductPage({ params }: ProductPageProps) {
     setTimeout(() => setIsAdded(false), 2000);
   };
 
-  const petTypeLabel = {
-    perro: 'Perros',
-    gato: 'Gatos',
-    ambos: 'Perros y Gatos',
-  };
+  // ✅ Precio desde Shopify
+  const price = product.selectedOrFirstAvailableVariant?.price?.amount;
+  const currency = product.selectedOrFirstAvailableVariant?.price?.currencyCode;
 
-  const categoryLabel = {
-    comida: 'Comida',
-    juguetes: 'Juguetes',
-    accesorios: 'Accesorios',
-    higiene: 'Higiene',
-  };
+  const formattedPrice = price
+    ? new Intl.NumberFormat('es-CO', {
+        style: 'currency',
+        currency: currency || 'COP'
+      }).format(parseFloat(price))
+    : '';
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -79,11 +93,14 @@ export default function ProductPage({ params }: ProductPageProps) {
           Tienda
         </Link>
         <span>/</span>
-        <Link href={`/tienda?categoria=${product.category}`} className="hover:text-foreground">
-          {categoryLabel[product.category]}
+        <Link
+          href={`/tienda?categoria=${product.collections.edges[0]?.node.title}`}
+          className="hover:text-foreground"
+        >
+          {product.collections.edges[0]?.node.title}
         </Link>
         <span>/</span>
-        <span className="text-foreground">{product.name}</span>
+        <span className="text-foreground">{product.title}</span>
       </nav>
 
       {/* Back Button */}
@@ -99,8 +116,14 @@ export default function ProductPage({ params }: ProductPageProps) {
       <div className="grid gap-8 lg:grid-cols-2">
         {/* Image */}
         <div className="bg-secondary relative aspect-square overflow-hidden rounded-2xl">
-          <Image src={product.image} alt={product.name} fill className="object-cover" priority />
-          <div className="absolute top-4 left-4 flex flex-col gap-2">
+          <Image
+            src={product.featuredImage?.url || ''}
+            alt={product.title}
+            fill
+            className="object-cover"
+            priority
+          />
+          {/* <div className="absolute top-4 left-4 flex flex-col gap-2">
             <Badge variant="secondary" className="gap-1">
               {product.petType === 'perro' && <Dog className="h-3 w-3" />}
               {product.petType === 'gato' && <Cat className="h-3 w-3" />}
@@ -112,21 +135,21 @@ export default function ProductPage({ params }: ProductPageProps) {
               )}
               {petTypeLabel[product.petType]}
             </Badge>
-          </div>
+          </div> */}
         </div>
 
         {/* Info */}
         <div className="flex flex-col">
           <div className="mb-2 flex items-center gap-2">
-            <Badge variant="outline">{categoryLabel[product.category]}</Badge>
-            <span className="text-muted-foreground text-sm">{product.brand}</span>
+            <Badge variant="outline">{product.collections.edges[0]?.node.title}</Badge>
+            {/* <span className="text-muted-foreground text-sm">{product.brand}</span> */}
           </div>
 
-          <h1 className="text-3xl font-bold md:text-4xl">{product.name}</h1>
+          <h1 className="text-3xl font-bold md:text-4xl">{product.title}</h1>
 
-          <p className="text-muted-foreground mt-4 text-lg">{product.description}</p>
+          {/* <p className="text-muted-foreground mt-4 text-lg">{product.description}</p> */}
 
-          <div className="mt-6 text-4xl font-bold">${product.price.toFixed(2)}</div>
+          <div className="mt-6 text-4xl font-bold">${formattedPrice}</div>
 
           {/* Quantity Selector */}
           <div className="mt-8">

@@ -10,9 +10,6 @@ import {
   Phone,
   MapPin,
   Clock,
-  Instagram,
-  Facebook,
-  Twitter,
   MessageCircle,
   Send,
   Check,
@@ -160,37 +157,7 @@ export default function ContactoPage() {
           </Card>
 
           {/* Social Media */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Siguenos en redes</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground mb-4 text-sm">
-                Mantente al dia con nuestras novedades, promociones y contenido exclusivo sobre el
-                cuidado de mascotas.
-              </p>
-              <div className="flex flex-wrap gap-3">
-                <Button variant="outline" size="lg" className="gap-2" asChild>
-                  <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
-                    <Instagram className="h-5 w-5" />
-                    Instagram
-                  </a>
-                </Button>
-                <Button variant="outline" size="lg" className="gap-2" asChild>
-                  <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
-                    <Facebook className="h-5 w-5" />
-                    Facebook
-                  </a>
-                </Button>
-                <Button variant="outline" size="lg" className="gap-2" asChild>
-                  <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
-                    <Twitter className="h-5 w-5" />
-                    Twitter
-                  </a>
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+     
 
           {/* FAQ Teaser */}
           <Card className="bg-foreground text-background">

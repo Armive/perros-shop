@@ -1,12 +1,21 @@
 export const PRODUCTS_QUERY = `
   query Products {
-    products(first: 12) {
+    products(first: 200) {
       edges {
         node {
           id
           title
           handle
-          image {
+          collections(first: 20) {
+            edges {
+              node {
+                id
+                title
+                handle 
+              }
+            }
+          }
+          featuredImage {
             url
             altText
             width
@@ -23,7 +32,6 @@ export const PRODUCTS_QUERY = `
     }
   }
 `;
-
 export const COLLECTIONS_QUERY = `
   query Collections {
     collections(first: 10) {
